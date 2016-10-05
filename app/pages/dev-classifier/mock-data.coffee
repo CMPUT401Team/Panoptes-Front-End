@@ -32,6 +32,7 @@ workflow = apiClient.type('workflows').create
     enable_switching_flipbook_and_separate: true
     multi_image_layout: 'grid3'
     invert_subject: true
+    pan_and_zoom: true
 
   first_task: 'init'
 
@@ -521,7 +522,6 @@ subject = apiClient.type('subjects').create
 project = apiClient.type('projects').create
   id: 'MOCK_PROJECT_FOR_CLASSIFIER'
   title: "The Dev Classifier"
-  experimental_tools: ['pan and zoom']
 
 preferences = apiClient.type('project_preferences').create
   preferences: {}
