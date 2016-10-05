@@ -18,7 +18,6 @@ EXPERIMENTAL_FEATURES = [
   'dropdown'
   'mini-course'
   'hide classification summaries'
-  'pan and zoom'
   'worldwide telescope'
   'hide previous marks'
   'column'
