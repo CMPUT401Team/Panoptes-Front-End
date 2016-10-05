@@ -1,5 +1,4 @@
 React = require 'react'
-PromiseRenderer = require '../components/promise-renderer'
 talkClient = require 'panoptes-client/lib/talk-client'
 moment = require 'moment'
 
@@ -10,11 +9,14 @@ module.exports = React.createClass
     isAvailable: null
     exportRequested: false
     exportError: null
+    mostRecent: null
 
   exportGet: ->
     @_exportsGet or= talkClient.type('data_requests').get(section: @section(), kind: @props.exportType).then (requests) =>
-      @setState(isAvailable: true) if requests.length > 0
-      requests
+      if requests.length > 0
+        [mostRecent] = requests
+        isAvailable = true
+        @setState {mostRecent, isAvailable}
 
   section: ->
     "project-#{ @props.project.id }"
@@ -35,20 +37,19 @@ module.exports = React.createClass
       </button> {' '}
       <small className="form-help">
         JSON format.{' '}
-        <PromiseRenderer promise={@exportGet()}>{([mostRecent]) =>
-          if mostRecent? and mostRecent?.url
-            <span>
-              Most recent data available requested {moment(mostRecent.created_at).fromNow()}:{' '}
-              <a href={mostRecent.url}>Download</a>.
-              Available until {moment(mostRecent.expires_at).calendar()}.
-            </span>
-          else if mostRecent?
-            <span>
-              Most recent data available requested {moment(mostRecent.created_at).fromNow()}:{' '}{mostRecent.state}
-            </span>
-          else
-            <span>No recent requests</span>
-        }</PromiseRenderer>
+        {if @state.mostRecent? and @state.mostRecent?.url
+          <span>
+            Most recent data available requested {moment(@state.mostRecent.created_at).fromNow()}:{' '}
+            <a href={@state.mostRecent.url}>Download</a>.
+            Available until {moment(@state.mostRecent.expires_at).calendar()}.
+          </span>
+        else if @state.mostRecent?
+          <span>
+            Most recent data available requested {moment(@state.mostRecent.created_at).fromNow()}:{' '}{@state.mostRecent.state}
+          </span>
+        else
+          <span>No recent requests</span>
+        }
         <br />
       </small>
 
